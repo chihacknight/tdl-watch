@@ -1,0 +1,43 @@
+name: Cron
+
+on:
+  schedule:
+    - cron: "12 8 * * *"
+  workflow_dispatch:
+
+env:
+  CI: true
+  PIPENV_VENV_IN_PROJECT: true
+  SCRAPY_SETTINGS_MODULE: tdl_scrapers.settings.prod
+  AUTOTHROTTLE_MAX_DELAY: 30.0
+  AUTOTHROTTLE_START_DELAY: 1.5
+  AUTOTHROTTLE_TARGET_CONCURRENCY: 3.0
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+
+      - name: Install Pipenv
+        uses: dschep/install-pipenv-action@v1
+
+      - name: Install dependencies
+        run: pipenv sync
+        env:
+          PIPENV_DEFAULT_PYTHON_VERSION: 3.9
+
+      - name: Run scrapers
+        run: |
+          export PYTHONPATH=$(pwd):$PYTHONPATH
+          ./.deploy.sh
+
+      - name: Export to Airtable
+        run: |
+          export PYTHONPATH=$(pwd):$PYTHONPATH
+          pipenv run scrapy update_airtable
