@@ -1,3 +1,20 @@
+[tool.poetry]
+name = "tdl-watch"
+version = "0.1.0"
+description = ""
+authors = []
+
+[tool.poetry.dependencies]
+python = ">=3.6.1,<4.0"
+scrapy = "^2.5"
+attrs = "^21.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2"
+flake8 = "^4.0"
+isort = "^5.10"
+black = "19.10b0"
+
 [tool.black]
 line-length = 88
 target-version = ['py38']

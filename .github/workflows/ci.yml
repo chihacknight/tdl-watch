@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 env:
   CI: true
-  PIPENV_VENV_IN_PROJECT: true
   AUTOTHROTTLE_MAX_DELAY: 30.0
   AUTOTHROTTLE_START_DELAY: 1.5
   AUTOTHROTTLE_TARGET_CONCURRENCY: 3.0
@@ -21,22 +20,20 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Install Pipenv
-        uses: dschep/install-pipenv-action@v1
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
 
       - name: Install dependencies
-        run: pipenv sync --dev
-        env:
-          PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
+        run: poetry install
 
       - name: Check imports with isort
-        run: pipenv run isort . --check-only
+        run: poetry run isort . --check-only
 
       - name: Check style with black
-        run: pipenv run black . --check
+        run: poetry run black . --check
 
       - name: Lint with flake8
-        run: pipenv run flake8 .
+        run: poetry run flake8 .
 
       - name: Test with pytest
-        run: pipenv run pytest
+        run: poetry run pytest
